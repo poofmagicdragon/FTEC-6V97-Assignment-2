@@ -7,7 +7,7 @@ import sys
 from rich.table import Table
 from app.service.login_service import login, get_login_inputs
 from app.service.user_service import get_all_users, print_all_users, create_user, delete_user, get_logged_in_user, reset_logged_in_user, get_user_input, get_username_for_deletion
-from app.service.portfolio_service import create_portfolio, get_all_portfolios, print_all_portfolios, delete_portfolio
+from app.service.portfolio_service import create_portfolio, get_all_portfolios, print_all_portfolios, delete_portfolio, get_portfolio_name_for_deletion
 from app.service.security_service import get_all_securities, print_all_securities
 from app.database import get_session
 from app.service.investment_service import create_purchase_order, harvest_investment
@@ -77,8 +77,8 @@ _router: Dict[str, MenuFunctions] = {
     "4.1": MenuFunctions(executor= lambda: get_all_securities(get_session()), printer = print_all_securities),
     "3.1": MenuFunctions(executor = lambda: get_all_portfolios(get_session()), printer = lambda x: print_all_portfolios(get_session())),
     "3.2": MenuFunctions(executor = lambda: create_portfolio(get_session(), get_logged_in_user()), printer = lambda x: _console.print(f'\n{x}')),
-    "4.2": MenuFunctions(executor=lambda: create_purchase_order(get_session(), get_logged_in_user()), printer=lambda x: _console.print(f'\n{x}')),
-    "3.3": MenuFunctions(executor = delete_portfolio, printer = lambda x: _console.print(f'\n{x}')),
+    "4.2": MenuFunctions(executor= lambda: create_purchase_order(get_session(), get_logged_in_user()), printer=lambda x: _console.print(f'\n{x}')),
+    "3.3": MenuFunctions(executor = lambda: delete_portfolio(get_session(), get_portfolio_name_for_deletion()), printer = lambda x: _console.print(f'\n{x}')),
     "3.4": MenuFunctions(executor = lambda: harvest_investment(get_session(), get_logged_in_user()), printer = lambda x: _console.print(f'\n{x}'))
     #"4.3": MenuFunctions(executor = get_all_purchase_orders, printer = print_all_purchase_orders)
 }

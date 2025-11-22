@@ -14,8 +14,8 @@ class Portfolio(Base):
     owner: Mapped[int] = mapped_column(String(30), ForeignKey("user.username"), nullable = False)
 
     user: Mapped["User"] = relationship("User", back_populates="portfolios")
-    investments: Mapped[List["Investment"]] = relationship("Investment", back_populates = "portfolio")
-    transactions: Mapped[List["Transaction"]] = relationship("Transaction", back_populates="portfolio")
+    investments: Mapped[List["Investment"]] = relationship("Investment", back_populates = "portfolio", cascade="all, delete-orphan")
+    transactions: Mapped[List["Transaction"]] = relationship("Transaction", back_populates="portfolio", cascade="all, delete-orphan")
     
     def __str__(self):
         return f"<Portfolio(name={self.name}, description={self.description}, user={self.owner})>"

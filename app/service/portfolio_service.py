@@ -31,8 +31,8 @@ def create_portfolio(session: Session, user: User) -> str:
     finally:
         session.close()
     
-def get_portfolio_by_name(name: str, session: Session) -> Portfolio |None:
-    portfolio = session.query(Portfolio).filter_by(name=name).one_or_none()
+def get_portfolio_by_name(name: str, session: Session, owner: str) -> Portfolio |None:
+    portfolio = session.query(Portfolio).filter_by(name=name, owner = owner).one_or_none()
     return portfolio
 
 
@@ -78,19 +78,27 @@ def print_all_portfolios(session: Session) -> None:
     finally:
         session.close()
 
+def get_portfolio_name_for_deletion() -> str:
+    return input("Enter the portfolio name to delete: ").strip()
+    
 
 def delete_portfolio(session: Session, portfolio_name: str) -> str:
-    try:
-        portfolio = get_portfolio_by_name(portfolio_name, session)
+    user = get_logged_in_user()
+    portfolio = get_portfolio_by_name(portfolio_name, session, user.username)
 
-        if portfolio is None:
-            raise UnsupportedUserOperationError(f"Portfolio '{portfolio_name}' does not exist")
-        session.delete(portfolio)
-        session.commit()
-        return f"Portfolio '{portfolio_name}' deleted successfully"
-    except IntegrityError:
-        raise UnsupportedUserOperationError(f"Portfolio '{portfolio_name}' has existing dependencies and cannot be deleted")
-    
+    if portfolio is None:
+        raise UnsupportedUserOperationError(f"Portfolio '{portfolio_name}' does not exist")
+
+    investments = session.query(Investment).filter_by(portfolio_id=portfolio.id).all()
+
+    if any(inv.quantity > 0 for inv in investments):
+        raise UnsupportedUserOperationError(
+            f"Portfolio '{portfolio_name}' still has active investments and cannot be deleted"
+        )
+
+    session.delete(portfolio)
+    session.commit()
+    return f"Portfolio '{portfolio_name}' deleted successfully"   
 
 def get_all_portfolio_logged_in_user(session: Session) -> List[Portfolio]:
     user = get_logged_in_user()

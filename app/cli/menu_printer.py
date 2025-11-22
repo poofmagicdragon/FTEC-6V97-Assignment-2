@@ -11,7 +11,7 @@ from app.service.portfolio_service import create_portfolio, get_all_portfolios, 
 from app.service.security_service import get_all_securities, print_all_securities
 from app.database import get_session
 from app.service.investment_service import create_purchase_order, harvest_investment
-#from app.service.investment_service import create_purchase_order, create_sell_order, print_all_purchase_orders, get_all_purchase_orders
+
 
 
 _console = Console()

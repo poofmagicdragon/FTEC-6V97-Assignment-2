@@ -11,7 +11,7 @@ from app.service.portfolio_service import create_portfolio, get_all_portfolios, 
 from app.service.security_service import get_all_securities, print_all_securities
 from app.database import get_session
 from app.service.investment_service import create_purchase_order, harvest_investment
-
+from app.service.transaction_service import print_all_transactions, get_all_transactions
 
 
 _console = Console()
@@ -22,10 +22,10 @@ class UnsupportedMenuError(Exception):
 
 _menus: Dict[int, str] = {
     constants.LOGIN_MENU: "----\nWelcome to Kiwi\n----\n1. Login\n0. Exit",
-    constants.MAIN_MENU: "----\nMain Menu\n----\n1. Manage Users\n2. Manage portfolios\n3. Market place\n0. Logout",
+    constants.MAIN_MENU: "----\nMain Menu\n----\n1. Manage Users\n2. Manage portfolios\n3. Market place\n4. View Transactions\n0. Logout",
     constants.MANAGE_USERS_MENU: "----\nManage Users\n----\n1. View users\n2. Add user\n3. Delete user\n0. Back to main menu",
     constants.MANAGE_PORTFOLIO: "----\nPortfolio Menu\n----\n1. View portfolio\n2. Create portfolio\n3. Delete Portfolio\n4. Harvest Investment\n0. Back to main menu",
-    constants.MARKET_PLACE: "----\nMarketplace\n----\n1. View securities\n2. Place purchase order\n3. View purchase orders\n0. Back to main menu"
+    constants.MARKET_PLACE: "----\nMarketplace\n----\n1. View securities\n2. Place purchase order\n0. Back to main menu"
 }
 
 # for purchase order
@@ -79,7 +79,8 @@ _router: Dict[str, MenuFunctions] = {
     "3.2": MenuFunctions(executor = lambda: create_portfolio(get_session(), get_logged_in_user()), printer = lambda x: _console.print(f'\n{x}')),
     "4.2": MenuFunctions(executor= lambda: create_purchase_order(get_session(), get_logged_in_user()), printer=lambda x: _console.print(f'\n{x}')),
     "3.3": MenuFunctions(executor = lambda: delete_portfolio(get_session(), get_portfolio_name_for_deletion()), printer = lambda x: _console.print(f'\n{x}')),
-    "3.4": MenuFunctions(executor = lambda: harvest_investment(get_session(), get_logged_in_user()), printer = lambda x: _console.print(f'\n{x}'))
+    "3.4": MenuFunctions(executor = lambda: harvest_investment(get_session(), get_logged_in_user()), printer = lambda x: _console.print(f'\n{x}')),
+    "1.4": MenuFunctions(executor = lambda: get_all_transactions(get_session()), printer = lambda x: print_all_transactions(get_session()))
     #"4.3": MenuFunctions(executor = get_all_purchase_orders, printer = print_all_purchase_orders)
 }
 
